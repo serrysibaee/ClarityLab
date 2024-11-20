@@ -20,7 +20,7 @@ pipe_img = load_image_pipeline()
 # Function to check if text is "fake" or "real"
 def check_text(text):
     result = pipe_text(text)
-    return result[0]['label']
+    return "the text is humanly written" if result[0]['label'] == "TRUE" else "the text is synthetically generated"
 
 # Function to check if image is "fake" or "real"
 def check_image(image):
@@ -33,12 +33,21 @@ def check_image(image):
     highest_label = highest_result['label']
     highest_score = highest_result['score']
     # Return the result as a formatted string
-    return f"The image is most likely {highest_label} with a score of {highest_score:.2f}"
+    if highest_label in ["sd", "dalle"]: 
+        return f"the image is synthetically generated with a probabilty of {highest_score:.2f}"
+    else: 
+        return f"The image is real with a probabilty of {highest_score:.2f}"
 
 # Streamlit app
 def main():
-    st.title("Fake or Real Checker")
-    st.write("Enter text or upload an image to check if it's fake or real. Only one at a time.")
+    st.title("ClarityLab (prototype)")
+    st.write("'AntiAI to clear you internet sky'")
+    # Display Logo
+    try:
+        image = Image.open("logo.png")
+        st.image(image=image, use_column_width=False)  # Adjust size to fit the container width
+    except FileNotFoundError:
+        st.error("Logo not found. Please ensure 'logo.png' is in the correct directory.")
 
     # Input fields
     text = st.text_area("Enter Text (leave blank if uploading an image)")
